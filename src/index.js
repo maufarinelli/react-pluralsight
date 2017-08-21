@@ -5,7 +5,8 @@ import './index.css';
 import registerServiceWorker from './registerServiceWorker';
 
 // Working with Data Module. Card Component
-import App from './Cards';
+//import App from './Cards';
+import App from './Game';
 
 ReactDOM.render(
 	<App />,
