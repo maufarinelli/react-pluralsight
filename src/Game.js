@@ -3,11 +3,9 @@ import './App.css';
 import _ from 'lodash';
 
 const Stars = (props) => {
-	const numberOfStarts = 1 + Math.floor(Math.random() * 9);
-
 	return (
 		<div className="col-sm-5">
-			{_.range(numberOfStarts).map(i => <i key={i} className="fa fa-star"></i>)}
+			{_.range(props.numberOfStarts).map(i => <i key={i} className="fa fa-star"></i>)}
 		</div>
 	);
 }
@@ -24,7 +22,10 @@ const Answer = (props) => {
 	return (
 		<div className="col-sm-5">
 			{props.selectedNumbers.map((number, i) =>
-				<span key={i}>{number}</span>
+				<span
+					key={i}
+					onClick={() => props.unselectNumber(number)}
+				>{number}</span>
 			)}
 		</div>
 	);
@@ -41,7 +42,11 @@ const Numbers = (props) => {
 		<div className="card text-center">
 			<div>
 				{Numbers.list.map((number, i) =>
-					<span key={i} className={numberClassName(number)}>{number}</span>
+					<span
+						key={i}
+						className={numberClassName(number)}
+						onClick={() => props.selectNumber(number)}
+					>{number}</span>
 				)}
 			</div>
 		</div>
@@ -53,22 +58,41 @@ class Game extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			selectedNumbers: [4, 5]
+			selectedNumbers: [],
+			ramdomNumberOfStars: 1 + Math.floor(Math.random() * 9)
 		};
-	}
+	};
+
+	selectNumber = (clickedNumber) => {
+		if(this.state.selectedNumbers.indexOf(clickedNumber) >= 0) {return;}
+		this.setState(prevState => ({
+			selectedNumbers: prevState.selectedNumbers.concat(clickedNumber)
+		}));
+	};
+
+	unselectNumber = (clickedNumber) => {
+		this.setState(prevState => ({
+			selectedNumbers: prevState.selectedNumbers.filter(number => number !== clickedNumber)
+		}));
+	};
 
 	render() {
+		const {selectedNumbers, ramdomNumberOfStars} = this.state;
 		return (
 			<div className="container">
 				<h3>Play Nine</h3>
 				<hr />
 				<div className="row">
-					<Stars />
+					<Stars numberOfStarts={this.state.ramdomNumberOfStars} />
 					<Button />
-					<Answer selectedNumbers={this.state.selectedNumbers} />
+					<Answer
+						selectedNumbers={this.state.selectedNumbers}
+						unselectNumber={this.unselectNumber} />
 				</div>
 				<br />
-				<Numbers selectedNumbers={this.state.selectedNumbers} />
+				<Numbers
+					selectedNumbers={this.state.selectedNumbers}
+					selectNumber={this.selectNumber} />
 			</div>
 		);
 	}
